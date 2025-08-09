@@ -35,3 +35,18 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Arquivos de configuração com credenciais
+src/main/resources/application.properties
+src/main/resources/application.yml
+src/main/resources/*.properties
+src/main/resources/*.yml
+
+# Arquivos de exemplo seguros são permitidos
+!src/main/resources/application-example.properties
+!src/main/resources/application-example.yml
+
+# Arquivos de ambiente
+.env
+.env.*
+!.env.example
