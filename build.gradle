@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.construcaosoftware'
@@ -12,6 +13,36 @@ java {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
+
+jacoco {
+	toolVersion = "0.8.10"
+}
+
+jacocoTestReport {
+	dependsOn test // só gera o relatório depois dos testes
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
+}
+
+test {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+//jacocoTestCoverageVerification {
+//	violationRules {
+//		rule {
+//			limit {
+//				minimum = 0.50
+//			}
+//		}
+//	}
+//}
+//
+//check.dependsOn jacocoTestCoverageVerification
+
 
 configurations {
 	compileOnly {
