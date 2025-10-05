@@ -47,6 +47,7 @@ src/main/resources/*.yml
 !src/main/resources/application-example.yml
 
 # Arquivos de ambiente
+terraform.tfvars
 .env
 .env.*
 !.env.example
