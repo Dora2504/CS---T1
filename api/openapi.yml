@@ -1,0 +1,239 @@
+openapi: 3.0.0
+info:
+  title: User API
+  description: A simple API for managing users, demonstrating CRUD operations.
+  version: 1.0.0
+servers:
+  - url: https://api.com/v1
+paths:
+  /users:
+    get:
+      summary: List all users (paginated)
+      description: Returns a paginated list of all registered users.
+      # Parâmetros adicionados para controlar a paginação
+      parameters:
+        - name: page
+          in: query
+          description: The page number to retrieve.
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: The number of users to return per page.
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: A paginated list of users.
+          content:
+            application/json:
+              schema:
+                # A resposta agora usa o novo schema de paginação
+                $ref: '#/components/schemas/PaginatedUsersResponse'
+    post:
+      summary: Create a new user
+      description: Creates a new user with the provided data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Created
+                  id:
+                    type: integer
+                    example: 101
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /users/{userId}:
+    get:
+      summary: Get user by ID
+      description: Returns a single user by their ID.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user to retrieve.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Update an existing user
+      description: Updates the data of an existing user by their ID.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user to update.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUser'
+      responses:
+        '200':
+          description: Successful operation, returns the updated user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete a user
+      description: Deletes a user by their ID.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user to delete.
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: No Content. The user was successfully deleted.
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    PaginatedUsersResponse:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          description: Total number of pages available.
+          example: 10
+        page:
+          type: integer
+          description: The current page number.
+          example: 1
+        nextPage:
+          type: string
+          format: uri
+          nullable: true
+          description: The URL for the next page of results. Null if it is the last page.
+          example: 'https://api.example.com/v1/users?page=2&limit=10'
+        prevPage:
+          type: string
+          format: uri
+          nullable: true
+          description: The URL for the previous page of results. Null if it is the first page.
+          example: null
+        data:
+          type: array
+          description: The array of user objects for the current page.
+          items:
+            $ref: '#/components/schemas/User'
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier for the user.
+          example: 1
+        name:
+          type: string
+          description: The full name of the user.
+          example: John Doe
+        email:
+          type: string
+          format: email
+          description: The email address of the user.
+          example: john.doe@example.com
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time the user was created.
+          example: '2025-08-14T20:45:00Z'
+    NewUser:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          example: Jane Doe
+        email:
+          type: string
+          format: email
+          example: jane.doe@example.com
+        password:
+          type: string
+          format: password
+          description: User's password.
+          example: 'strong!password123'
+    UpdateUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Jane D. Smith
+        email:
+          type: string
+          format: email
+          example: jane.smith@example.com
+  responses:
+    NotFound:
+      description: The specified resource was not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: User not found.
+    BadRequest:
+      description: Invalid request, e.g., validation error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Email is invalid or already in use.
+    InternalServerError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: An unexpected error occurred.
