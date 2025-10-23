@@ -3,6 +3,8 @@ plugins {
 	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'jacoco'
+	// Adicionamos plugin para criar JAR único
+	id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'com.construcaosoftware'
@@ -19,30 +21,12 @@ jacoco {
 }
 
 jacocoTestReport {
-	dependsOn test // só gera o relatório depois dos testes
+	dependsOn test
 	reports {
 		xml.required.set(true)
 		html.required.set(true)
 	}
 }
-
-//test {
-//	useJUnitPlatform()
-//	finalizedBy jacocoTestReport
-//}
-
-//jacocoTestCoverageVerification {
-//	violationRules {
-//		rule {
-//			limit {
-//				minimum = 0.50
-//			}
-//		}
-//	}
-//}
-//
-//check.dependsOn jacocoTestCoverageVerification
-
 
 configurations {
 	compileOnly {
@@ -55,24 +39,54 @@ repositories {
 }
 
 dependencies {
+	// Dependências Spring
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.postgresql:postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// Lombok e MapStruct
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	runtimeOnly 'org.postgresql:postgresql'
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+	// AWS Serverless Java Container
+	implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.0.1'
+
+	// Testes
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 	testImplementation 'org.mockito:mockito-core:5.11.0'
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
 }
-//
-//tasks.named('test') {
-//	useJUnitPlatform()
-//}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.named('bootJar') {
+	// Não cria o bootJar padrão com Tomcat, pois o Lambda não precisa
+	enabled = false
+}
+
+tasks.named('jar') {
+	// Garante que o jar comum seja criado
+	enabled = true
+}
+
+tasks.named('shadowJar') {
+	archiveBaseName.set('meuapp-lambda')
+	archiveClassifier.set('')
+	archiveVersion.set('')
+
+	// Remove o Tomcat embutido (não necessário no Lambda)
+	exclude('org/apache/tomcat/**')
+	exclude('org/springframework/boot/web/embedded/tomcat/**')
+}
+
+tasks.build {
+	dependsOn tasks.shadowJar
+}
