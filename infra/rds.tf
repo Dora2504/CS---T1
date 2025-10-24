@@ -8,8 +8,10 @@ resource "aws_db_instance" "postgres" {
   password                = var.db_password
   skip_final_snapshot     = true
   publicly_accessible     = false
-  vpc_security_group_ids  = ["sg-09c9b3f17f3e26e35"]
-  db_subnet_group_name    = "default-vpc-09688a9154e0f9956"
+  
+  # Referencie o novo Security Group criado acima
+  vpc_security_group_ids  = [aws_security_group.rds_sg.id]
+  db_subnet_group_name    = aws_db_subnet_group.rds_subnet_group.name
 
   tags = {
     Name = "RDS-Postgres-Academy"
