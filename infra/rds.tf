@@ -1,22 +1,15 @@
 resource "aws_db_instance" "postgres" {
-  allocated_storage      = 20
-  storage_type           = "gp2"
-  engine                 = "postgres"
-  engine_version         = "13.3"
-  instance_class         = "db.t3.micro"
-  db_name                = "meubanco"
-
-  # Variáveis para usuário e senha
-  username               = var.db_username
-  password               = var.db_password
-
-  # IDs de recursos fornecidos pelo instrutor
-  vpc_security_group_ids = ["sg-id-fornecido-pelo-instrutor"]
-  db_subnet_group_name   = "nome-do-subnet-group-fornecido"
-
-  multi_az               = false
-  publicly_accessible    = false
-  skip_final_snapshot    = true
+  identifier              = "rds-postgres-academy"
+  engine                  = "postgres"
+  instance_class          = var.db_instance_class
+  allocated_storage       = 20
+  db_name                 = var.db_name
+  username                = var.db_username
+  password                = var.db_password
+  skip_final_snapshot     = true
+  publicly_accessible     = false
+  vpc_security_group_ids  = ["sg-09c9b3f17f3e26e35"]
+  db_subnet_group_name    = "default-vpc-09688a9154e0f9956"
 
   tags = {
     Name = "RDS-Postgres-Academy"
