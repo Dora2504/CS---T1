@@ -2,12 +2,12 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "6.2.0"
+      version = ">= 6.2.0"
     }
     # O provider Docker é usado para construir e enviar a imagem para o ECR
     docker = {
       source  = "kreuzwerker/docker"
-      version = "~> 3.0"
+      version = "~> 3.0.2"
     }
   }
 }
