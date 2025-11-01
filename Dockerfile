@@ -1,26 +1,27 @@
-# --- ESTÁGIO 1: O Construtor (Builder) ---
-FROM gradle:8.5-jdk17-alpine AS builder
+# --- ESTÁGIO 1: Builder ---
+FROM gradle:8.5-jdk17 AS builder
 WORKDIR /app
 
-# Copia apenas arquivos de build para cache
+# Copia arquivos de build para cache
 COPY build.gradle settings.gradle ./
 COPY gradlew ./
 COPY gradle ./gradle
 
-# Agora copia todo o código-fonte
+# Copia código-fonte
 COPY src ./src
 
-# Compila o projeto e gera o bootJar executável
-RUN gradle bootJar --no-daemon --stacktrace
+# Compila e gera o bootJar
+# Compila e gera o bootJar **com debug**
+RUN ./gradlew clean shadowJar --no-daemon --stacktrace && \
+    echo "Arquivos gerados:" && ls -l /app/build/libs
 
-# --- ESTÁGIO 2: Imagem final ---
-FROM openjdk:17-jdk-slim
-RUN adduser --disabled-password springuser
-USER springuser
-WORKDIR /app
 
-# Copia apenas o bootJar gerado
-COPY --from=builder /app/build/libs/*.jar app.jar
+# --- ESTÁGIO 2: Imagem Lambda ---
+FROM public.ecr.aws/lambda/java:17
 
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Copia o JAR gerado para a imagem Lambda
+COPY --from=builder /app/build/libs/demo-0.0.1-SNAPSHOT-all.jar ${LAMBDA_TASK_ROOT}/app.jar
+
+# Define o handler para o Lambda
+# Para Spring Boot Lambda com adapter: com.meuapp.StreamLambdaHandler::handleRequest
+CMD ["com.meuapp.StreamLambdaHandler::handleRequest"]

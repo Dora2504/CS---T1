@@ -1,9 +1,14 @@
+# Cria o repositório no ECR
+resource "aws_ecr_repository" "lambda_repo" {
+  name = "cs-lambda"
+}
+
 resource "aws_lambda_function" "app" {
   function_name = "cs_lambda"
-  filename      = "./../build/libs/demo-0.0.1-SNAPSHOT-plain.jar"
-  handler       = "com.meuapp.StreamLambdaHandler::handleRequest"
-  runtime       = "java17"
-  role          = "arn:aws:iam::891377042208:role/LabRole"  # role pré-existente no LabRole (ARN)
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.lambda_repo.repository_url}:latest"
   memory_size   = 1024
   timeout       = 30
+  role          = "arn:aws:iam::891377042208:role/LabRole"
 }
+
