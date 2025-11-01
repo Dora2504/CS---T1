@@ -48,6 +48,9 @@ src/main/resources/*.yml
 
 # Arquivos de ambiente
 terraform.tfvars
+.terraform/providers/
+*.tfstate.backup
 .env
 .env.*
 !.env.example
+!.terraform.lock.hcl
