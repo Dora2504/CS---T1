@@ -4,11 +4,6 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 6.2.0"
     }
-    # O provider Docker é usado para construir e enviar a imagem para o ECR
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.6.2"
-    }
   }
 }
 

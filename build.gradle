@@ -3,18 +3,23 @@ plugins {
 	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'jacoco'
-	// Adicionamos plugin para criar JAR único
-	id 'com.github.johnrengelman.shadow' version '8.1.1'
+	id 'com.github.johnrengelman.shadow' version '8.1.1' // se for usar shadowJar
 }
 
 group = 'com.construcaosoftware'
 version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+
+repositories {
+	mavenCentral()
 }
+
+//java {
+//	toolchain {
+//		languageVersion = JavaLanguageVersion.of(17)
+//	}
+//}
 
 jacoco {
 	toolVersion = "0.8.10"
@@ -34,9 +39,6 @@ configurations {
 	}
 }
 
-repositories {
-	mavenCentral()
-}
 
 dependencies {
 	// Dependências Spring
@@ -67,26 +69,14 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-tasks.named('bootJar') {
-	// Não cria o bootJar padrão com Tomcat, pois o Lambda não precisa
-	enabled = false
-}
-
-tasks.named('jar') {
-	// Garante que o jar comum seja criado
-	enabled = true
-}
-
+// Configura o JAR gerado pelo Shadow para ser usado no Lambda
 tasks.named('shadowJar') {
-	archiveBaseName.set('meuapp-lambda')
-	archiveClassifier.set('')
-	archiveVersion.set('')
-
-	// Remove o Tomcat embutido (não necessário no Lambda)
-	exclude('org/apache/tomcat/**')
-	exclude('org/springframework/boot/web/embedded/tomcat/**')
+	archiveBaseName.set('demo')
+	archiveClassifier.set('all') // resultado: demo-0.0.1-SNAPSHOT-all.jar
+	archiveVersion.set('0.0.1-SNAPSHOT')
 }
 
-tasks.build {
-	dependsOn tasks.shadowJar
+// Se você quiser, desabilite o bootJar para não gerar o jar padrão do Spring
+tasks.named('bootJar') {
+	enabled = false
 }
