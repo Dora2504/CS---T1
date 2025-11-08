@@ -47,10 +47,29 @@ src/main/resources/*.yml
 !src/main/resources/application-example.yml
 
 # Arquivos de ambiente
-terraform.tfvars
-.terraform/providers/
-*.tfstate.backup
 .env
 .env.*
 !.env.example
-!.terraform.lock.hcl
+
+# AWS Credentials
+aws_credentials.env
+*.pem
+*.key
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.tfvars
+!terraform.tfvars.example
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc

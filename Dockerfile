@@ -1,27 +1,38 @@
-# --- ESTÁGIO 1: Builder ---
-FROM gradle:8.5-jdk17 AS builder
+# ==============================
+# STAGE 1: BASE - Dependências
+# ==============================
+FROM gradle:8.5-jdk17 AS base
 WORKDIR /app
 
-# Copia arquivos de build para cache
+# Copia arquivos de configuração do Gradle para cache de dependências
 COPY build.gradle settings.gradle ./
 COPY gradlew ./
 COPY gradle ./gradle
 
-# Copia código-fonte
+# Baixa dependências (será cacheado)
+RUN ./gradlew build --no-daemon -x test || return 0
+
+# ==============================
+# STAGE 2: BUILDER - Build do JAR
+# ==============================
+FROM base AS builder
+WORKDIR /app
+
+# Copia código fonte
 COPY src ./src
 
-# Compila e gera o bootJar
-# Compila e gera o bootJar **com debug**
+# Build do shadowJar (ignora testes)
 RUN ./gradlew clean shadowJar --no-daemon --stacktrace && \
     echo "Arquivos gerados:" && ls -l /app/build/libs
 
+# ==============================
+# STAGE 3: PRODUCTION - Lambda
+# ==============================
+FROM public.ecr.aws/lambda/java:17 AS production
 
-# --- ESTÁGIO 2: Imagem Lambda ---
-FROM public.ecr.aws/lambda/java:17
-
-# Copia o JAR gerado para a imagem Lambda
+# Copia apenas o JAR gerado pelo builder
 COPY --from=builder /app/build/libs/demo-0.0.1-SNAPSHOT-all.jar ${LAMBDA_TASK_ROOT}/app.jar
 
-# Define o handler para o Lambda
-# Para Spring Boot Lambda com adapter: com.meuapp.StreamLambdaHandler::handleRequest
-CMD ["com.meuapp.StreamLambdaHandler::handleRequest"]
+# Define handler correto (atenção ao package da sua classe)
+CMD ["com.construcaosoftware.demo.lambda.StreamLambdaHandler::handleRequest"]
+

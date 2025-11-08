@@ -1,16 +1,23 @@
-version: '3.8'
-
 services:
   app:
-    build: .
-    image: cs-t1-springboot
-
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: cs-t1-springboot-dev
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"
+    volumes:
+      - ./src:/app/src
+      - ./build.gradle:/app/build.gradle
+      - ./settings.gradle:/app/settings.gradle
+      - gradle-cache:/home/gradle/.gradle
     depends_on:
       - db
 
@@ -27,3 +34,4 @@ services:
 
 volumes:
   pgdata:
+  gradle-cache:

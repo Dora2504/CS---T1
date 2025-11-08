@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(name = "/users")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
 
-    @PostMapping(name = "/createUser")
+    @PostMapping("/createUser")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
         userService.createUser(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(userDto);

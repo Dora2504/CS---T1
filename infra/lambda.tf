@@ -9,6 +9,5 @@ resource "aws_lambda_function" "app" {
   image_uri     = "${aws_ecr_repository.lambda_repo.repository_url}:latest"
   memory_size   = 1024
   timeout       = 30
-  role          = "arn:aws:iam::891377042208:role/LabRole"
+  role          = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
 }
-
