@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: development
+      target: production
     image: cs-t1-springboot-dev
     ports:
       - "8080:8080"

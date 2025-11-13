@@ -1,0 +1,47 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{30258541-D0D8-F3FD-D559-E63D6BF074C2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".terraform", ".terraform", "{1FCAC071-226C-AA29-38B3-FD30144BDE02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{83E148A4-878F-C15C-69FE-B377767D7663}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lambda_function", "lambda_function", "{0096F22E-AFAC-5FCB-79A9-F74979405402}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{C74FA497-3000-44C4-AD2E-D7137329F44F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "fixtures", "fixtures", "{4E590506-423C-32F6-1BB5-51FD9573A078}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "runtimes", "runtimes", "{1D554B0F-145C-3D00-8D93-47CD71282C49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "infra\.terraform\modules\lambda_function\examples\fixtures\runtimes\dotnet8\Program.csproj", "{851B86C3-32D2-F614-F7D8-8B92D621C102}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{851B86C3-32D2-F614-F7D8-8B92D621C102}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{851B86C3-32D2-F614-F7D8-8B92D621C102}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{851B86C3-32D2-F614-F7D8-8B92D621C102}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{851B86C3-32D2-F614-F7D8-8B92D621C102}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1FCAC071-226C-AA29-38B3-FD30144BDE02} = {30258541-D0D8-F3FD-D559-E63D6BF074C2}
+		{83E148A4-878F-C15C-69FE-B377767D7663} = {1FCAC071-226C-AA29-38B3-FD30144BDE02}
+		{0096F22E-AFAC-5FCB-79A9-F74979405402} = {83E148A4-878F-C15C-69FE-B377767D7663}
+		{C74FA497-3000-44C4-AD2E-D7137329F44F} = {0096F22E-AFAC-5FCB-79A9-F74979405402}
+		{4E590506-423C-32F6-1BB5-51FD9573A078} = {C74FA497-3000-44C4-AD2E-D7137329F44F}
+		{1D554B0F-145C-3D00-8D93-47CD71282C49} = {4E590506-423C-32F6-1BB5-51FD9573A078}
+		{851B86C3-32D2-F614-F7D8-8B92D621C102} = {1D554B0F-145C-3D00-8D93-47CD71282C49}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3B462ED7-231C-49CF-B44A-1CF61FCC0CDE}
+	EndGlobalSection
+EndGlobal
