@@ -1,6 +1,7 @@
 # ==============================
 # STAGE 1: BASE - Dependências
 # ==============================
+# Cache buster: 2025-11-16-rebuild-with-simphealth
 FROM gradle:8.5-jdk17 AS base
 WORKDIR /app
 
@@ -18,6 +19,9 @@ RUN ./gradlew build --no-daemon -x test || return 0
 FROM base AS builder
 WORKDIR /app
 
+# Cache bust: rebuild JAR with SimpleHealthHandler (2025-11-16-12-30)
+RUN echo "Rebuilding JAR with SimpleHealthHandler..."
+
 # Copia código fonte
 COPY src ./src
 
@@ -30,9 +34,9 @@ RUN ./gradlew clean shadowJar --no-daemon --stacktrace && \
 # ==============================
 FROM public.ecr.aws/lambda/java:17 AS production
 
-# Copia apenas o JAR gerado pelo builder
-COPY --from=builder /app/build/libs/demo-0.0.1-SNAPSHOT-all.jar ${LAMBDA_TASK_ROOT}/app.jar
+# Copia o JAR para o diretório lib do Lambda (será incluído automaticamente no classpath)
+COPY --from=builder /app/build/libs/demo-0.0.1-SNAPSHOT-all.jar ${LAMBDA_TASK_ROOT}/lib/
 
-# Define handler correto (atenção ao package da sua classe)
-CMD ["com.construcaosoftware.demo.lambda.StreamLambdaHandler::handleRequest"]
+# Define handler (Lambda runtime procurará na pasta lib/)
+CMD ["com.construcaosoftware.demo.lambda.SimpleHealthHandler"]
 
